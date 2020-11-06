@@ -11,7 +11,7 @@ class iUser:
             return False
 
 class Users:
-    def __init__(self, userId, password, name, email, userRole):
+    def __init__(self, userId, name, email, password, userRole):
         self.userId = userId
         self.password = password
         self.name = name
@@ -20,20 +20,13 @@ class Users:
         self.isLoggedIn = False
 
     def login(self):
-        UserDatabase = {"abc@gmail.com": "abcdefg", "def@gmail.com": "password1", "ghi@gmail.com": "password2"} # Get user list from database
-        if self.isLoggedIn == True:
-            print("Anda sudah login")
-        else:
-            if self.email in UserDatabase:
-                if self.password == UserDatabase[self.email]:
-                    print("Login success")
-                    self.isLoggedIn = True
-                    return True
-                else:
-                    print("Wrong password")
-                    return False
-            else:
-                print("Email not found")
+        return (self.email, self.password)
+
+    def getUserRole(self):
+        return self.userRole
+
+    def getEmail(self):
+        return self.email
 
     def verifyAccount(self):
         return self.isLoggedIn
@@ -94,11 +87,18 @@ class Admin(Users):
 
 import datetime
 class Customer(Users):
-    def __init__(self, weight, height, birthDate,gender):
+    def __init__(self, userId, name, email, password, userRole, weight, height, birthDate,gender):
+        Users.__init__(self, userId, name, email, password, userRole)
         self.weight = weight
         self.height = height
         self.birthDate = birthDate
         self.gender=gender
+        self.calorieRecord = []
+
+    def consumeFood(self, activity, foodName, foodCalorie):
+        calorie = CalorieIntake(activity, foodName, foodCalorie, datetime.datetime.now())
+        self.calorieRecord.append(calorie)
+        return calorie
     
     def getWeight(self):
         return self.weight
@@ -124,7 +124,8 @@ class Customer(Users):
 
 class ContentWriter(Users):
 
-    def __init__(self):
+    def __init__(self, userId, name, email, password, userRole):
+        Users.__init__(self, userId, name, email, password, userRole)
         self.content = []
 
     def createContent(self, title, content):
@@ -149,7 +150,8 @@ class ContentWriter(Users):
             return False
 
 class Nutrisionist(Users):
-    def __init__(self, timeShift, nameOfHospital):
+    def __init__(self, userId, name, email, password, userRole, timeShift, nameOfHospital):
+        Users.__init__(self, userId, name, email, password, userRole)
         self.timeShift = timeShift
         self.available = True
         self.nameOfHospital = nameOfHospital
@@ -157,6 +159,26 @@ class Nutrisionist(Users):
 
     def proofReading(self):
         return True
+
+class Message():
+    def __init__(self, to, message, dari):
+        self.message = message
+        self.to = to
+        self.read = False
+        self.dari = dari
+
+    def getTo(self):
+        return self.to
+
+    def getRead(self):
+        return self.read
+
+    def readMessage(self):
+        self.read = True
+        return self.message
+
+    def getDari(self):
+        return self.dari
 
 class Content:
     def __init__(self, datePublish, writer, title, content):
@@ -280,4 +302,139 @@ class CalorieIntake:
         plt.ylabel("Jumlah Kalori")
         return True
 
-calorieDatabase={"2020-11-01":1500,"2020-11-02":1100,"2020-11-03":1450}
+users = []
+messages = []
+
+def tambahUser(id):
+    while True:
+        print('\n\n0. untuk keluar')
+        print('1. Tambah customers')
+        print('2. Tambah nutrisionist')
+        print('3. Tambah content writers')
+        choose = int(input('Pilih angka: '))
+
+        if choose == 0:
+            return None
+
+        elif choose == 1:
+            name = input('\n\nYour name: ')
+            email = input('Your email: ')
+            password = input('Your password: ')
+            weight = int(input('Your weight: '))
+            height = int(input('Your Height: '))
+            birthDate = input('Birth Date: ')
+            gender = input('Gender P/L: ')
+
+            user = Customer(id, name, email, password, 'customer', weight, height, birthDate, gender)
+
+            return user
+
+        elif choose == 2:
+            name = input('\n\nYour name: ')
+            email = input('Your email: ')
+            password = input('Your password: ')
+
+            timeShift = input('Time shift: ')
+            hospital = input('Hospital: ')
+
+            user = Nutrisionist(id, name, email, password, 'nutrisionist', timeShift, hospital)
+
+            return user
+        
+        elif choose == 3:
+            name = input('\n\nYour name: ')
+            email = input('Your email: ')
+            password = input('Your password: ')
+
+            user = ContentWriter(id, name, email, password, 'writer')
+
+            return user
+
+        else:
+            print('\n\nWrong choice\n\n')
+            continue
+            
+def login(users):
+    email = input('Email: ')
+    password = input('Password: ')
+    for user in users:
+        uEmail, uPassword = user.login()
+        if email == uEmail and password == uPassword:
+            return True
+    
+    return False
+
+def readMessage(email):
+    for message in messages:
+        to = message.getTo()
+        read = message.getRead()
+        if email == to and not read:
+            print('\n\nmessage dari: ', message.getDari())
+            print('isi pesan: ', message.readMessage())
+
+def sendMessage(email):
+    to = input('ke: ')
+    pesan = input('message: ')
+    message = Message(to, pesan, email)
+    return message
+
+def userManagement(user):
+    
+    userRole = user.getUserRole()
+    email = user.getEmail()
+
+    readMessage(email)
+
+    if userRole == 'customer':
+        while True:
+            print('\n\n0. Exit')
+            print('1. Send message')
+            print('2. calorie reoord')
+            print('3. logout')
+            choose = int(input('Choose: '))
+
+            if choose == 1:
+                message = sendMessage(email)
+                messages.append(message)
+            elif choose == 2:
+                activity = input('\n\nActivity [low, moderete, high]: ')
+                foodName = input('Food name: ')
+                foodCalorie = int(input('Food calorie: '))
+
+                user.consumeFood(activity, foodName, foodCalorie)
+                print('success')
+            elif choose == 3:
+                return
+            else:
+                continue
+
+def main():
+    print('Simple execute program\n\n')
+
+    countUser = 0
+    while True:
+        print('\n\n1. Tambah user')
+        print('2. Login')
+        # print('3. Lupa password')
+        choose = int(input('Pilih angka: '))
+
+        if choose == 1:
+            user = tambahUser(countUser)
+            if user is not None:
+                users.append(user)
+                userManagement(user)
+                countUser += 1
+            else:
+                continue
+
+        elif choose == 2:
+            status = login(users)
+            if status:
+                print('Login success')
+            else:
+                print('Login failed')
+
+
+
+if __name__ == '__main__':
+    main()
