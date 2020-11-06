@@ -1,3 +1,4 @@
+from collections import defaultdict
 class iUser:
     def register(self, password, name, email):
         # check if credentials is
@@ -42,13 +43,32 @@ class Admin(Users):
     
     def getUserInformation(self, email):
         return True
+    
+    def replyMessage(self, message):
+        return True
 
+import datetime
 class Customer(Users):
-    def __init__(self, weight, height, birthDate):
+    def __init__(self, weight, height, birthDate,gender):
         self.weight = weight
         self.height = height
         self.birthDate = birthDate
-
+        self.gender=gender
+    
+    def getWeight(self):
+        return self.weight
+    
+    def getHeight(self):
+        return self.height
+    
+    def getGender(self):
+        return self.gender
+    
+    def calculateAge(self):
+        today = datetime.date.today()
+        birthDate= self.birthDate.date()
+        return (today-birthDate)//365
+    
     def bookNutrisionist(self):
         return True
 
@@ -89,10 +109,11 @@ class Content:
         return True
 
 class Consultation:
-    def __init__(self, consultationID, userID, nutrisionistID):
+    def __init__(self, consultationID, userID, nutrisionistID,consultationTime):
         self.consultationID = consultationID
         self.userID = userID
         self.nutrisionistID = nutrisionistID
+        self.consultationTime=consultationTime
     
     def sendMessage(self, message):
         return True
@@ -112,13 +133,18 @@ class Consultation:
     def getMedicalReference(self):
         return True
 
+import random
 class RecommendationFood:
 
-    dishes: []
-    calorie: []
+    dishes= ['Sup Ayam']
+    calorie= [1000]
+    list_recom=defaultdict(list)
+    for i in range(len(dishes)):
+        list_recom[dishes[i]]=calorie[i]
 
     def getRecomendation(self, calorie):
-        return 'Makan yang BANYAK biar happy'
+        nilai=random.choice(self.dishes)
+        return (nilai, self.list_recom[nilai])
 
 class CalorieIntake:
     def __init__(self, activity, foodName, foodCalorie, date):
@@ -142,7 +168,7 @@ class CalorieIntake:
     def sendNotification(self):
         return 'Makan bang'
     
-    def saveCalorir(self):
+    def saveCalorie(self):
         return True
     
     def plotGraph(self):
