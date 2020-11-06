@@ -171,9 +171,10 @@ class Content:
         if userRole == 'admin' or userRole == 'nutrisionist':
             self.approved = approveStatus
             print('Berhasil merubah status content')
+
             return True
         else:
-            print('Akses denied')
+            print('Anda tidak punyak akses untuk perihal ini')
             return False
     
     def getContent(self):
