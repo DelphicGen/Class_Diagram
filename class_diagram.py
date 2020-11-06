@@ -123,14 +123,30 @@ class Customer(Users):
         return True   
 
 class ContentWriter(Users):
-    def createContent(self):
+
+    def __init__(self):
+        self.content = []
+
+    def createContent(self, title, content):
+        content = Content(datetime.datetime.now(), self.name, title, content)
+        self.content.append(content)
         return True
     
-    def editContent(self):
-        return True
+    def editContent(self, contentId, title, content):
+        try:
+            content = Content(datetime.datetime.now(), self.name, title, content)
+            self.content[contentId] = content
+            return True
+        except:
+            print('Gagal edit content')
+            return False
 
-    def deleteContent(self):
-        return True  
+    def deleteContent(self, contentId):
+        try:
+            del(self.content[contentId])
+            return True
+        except:
+            return False
 
 class Nutrisionist(Users):
     def __init__(self, timeShift, nameOfHospital):
@@ -149,9 +165,23 @@ class Content:
         self.title = title
         self.content = content
         self.approved = False
+
+    def approveContent(self, userRole, approveStatus):
+        if userRole == 'admin' or userRole == 'nutrisionist':
+            self.approved = approveStatus
+            print('Berhasil merubah status content')
+            return True
+        else:
+            print('Akses denied')
+            return False
     
     def getContent(self):
-        return True
+        return {
+            'publised' : self.datePublish,
+            'writer' : self.writer,
+            'title' : self.title,
+            'content' : self.content
+        }
 
 class Consultation:
     def __init__(self, consultationID, userID, nutrisionistID, consultationTime):
