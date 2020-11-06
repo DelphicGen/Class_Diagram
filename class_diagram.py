@@ -1,5 +1,5 @@
 class iUser:
-    def register(password, name, email):
+    def register(self, password, name, email):
         # check if credentials is
         return True
 
@@ -11,69 +11,70 @@ class Users:
         self.email = email
         self.userRole = userRole
 
-    def login(email, password):
+    def login(self, email, password):
         # check if credentials is 
         return True
 
-    def verifyAccount():
+    def verifyAccount(self):
         return True
 
-    def forgetPassword():
+    def forgetPassword(self):
         return True
 
-    def changePassword(token):
+    def changePassword(self, token):
         return True
 
-    def logout():
+    def logout(self):
         return True
 
-class Admin(User):
+class Admin(Users):
     def __init__(self, available):
         self.available = True
 
-    def verifyUser():
+    def verifyUser(self):
         return True
 
-    def solveThreadProblem():
+    def solveThreadProblem(self):
         return True
     
-    def deleteContent():
+    def deleteContent(self):
         return True
     
-    def getUserInformation(email):
+    def getUserInformation(self, email):
         return True
 
-class Customer(User):
+class Customer(Users):
     def __init__(self, weight, height, birthDate):
         self.weight = weight
         self.height = height
         self.birthDate = birthDate
 
-    def bookNutrisionist():
+    def bookNutrisionist(self):
         return True
 
-    def sendMessage():
-        message = chatMessage('test','test','test','test')
-        message.sendMessage(message)    
+    def sendMessage(self):
+        # message = chatMessage('test','test','test','test')
+        # message.sendMessage(message) 
+        return True   
 
-class ContentWriter(User):
-    def createContent():
+class ContentWriter(Users):
+    def createContent(self):
         return True
     
-    def editContent():
+    def editContent(self):
         return True
 
-    def deleteContent():
+    def deleteContent(self):
         return True  
 
-class Nutrisionist(User):
+class Nutrisionist(Users):
     def __init__(self, timeShift, nameOfHospital):
         self.timeShift = timeShift
         self.available = True
         self.nameOfHospital = nameOfHospital
         self.rating = 5
 
-    def proofReading():
+    def proofReading(self):
         return True
 
 class Content:
@@ -84,8 +85,8 @@ class Content:
         self.content = content
         self.approved = False
     
-    def getContent():
-        return True;
+    def getContent(self):
+        return True
 
 class Consultation:
     def __init__(self, consultationID, userID, nutrisionistID):
@@ -93,22 +94,22 @@ class Consultation:
         self.userID = userID
         self.nutrisionistID = nutrisionistID
     
-    def sendMessage(message):
+    def sendMessage(self, message):
         return True
     
-    def replyMessage(message):
+    def replyMessage(self, message):
         return True
     
-    def getUserInformation(email):
+    def getUserInformation(self, email):
         return True
     
-    def getUserCalorie(email):
+    def getUserCalorie(self, email):
         return True
     
-    def getNutrisionistInformation(email):
+    def getNutrisionistInformation(self, email):
         return True
     
-    def getMedicalReference():
+    def getMedicalReference(self):
         return True
 
 class RecommendationFood:
@@ -116,7 +117,7 @@ class RecommendationFood:
     dishes: []
     calorie: []
 
-    def getRecomendation(calorie):
+    def getRecomendation(self, calorie):
         return 'Makan yang BANYAK biar happy'
 
 class CalorieIntake:
@@ -126,23 +127,23 @@ class CalorieIntake:
         self.foodCalorie = foodCalorie
         self.date = date
     
-    def calculateIdealCalorie():
+    def calculateIdealCalorie(self):
         return True
     
-    def getCalorie(food):
+    def getCalorie(self, food):
         return 0
     
-    def calculateConsumedCalorie():
+    def calculateConsumedCalorie(self):
         return 0
     
-    def compareIntake():
+    def compareIntake(self):
         return True
     
-    def sendNotification():
+    def sendNotification(self):
         return 'Makan bang'
     
-    def saveCalorir():
+    def saveCalorir(self):
         return True
     
-    def plotGraph():
+    def plotGraph(self):
         return True
