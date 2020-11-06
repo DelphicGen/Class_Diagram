@@ -1,6 +1,7 @@
 from collections import defaultdict
 import string
 import random
+
 class iUser:
     def register(self, password, name, email, userRole):
         # check if credentials is
@@ -30,10 +31,10 @@ class Users:
                     self.isLoggedIn = True
                     return True
                 else:
-                    print("Wrong password")
+                    print("Email and password did not match")
                     return False
             else:
-                print("Email not found")
+                print("Email is not registered, please sign up")
 
     def verifyAccount(self):
         return self.isLoggedIn
@@ -217,8 +218,10 @@ class RecommendationFood:
     for i in range(len(dishes)):
         list_recom[dishes[i]]=calorie[i]
 
-    def getRecomendation(self, calorie):
+    def getRecomendation(self, ideal_cal):
         nilai=random.choice(self.dishes)
+        while(nilai > ideal_cal):
+            nilai=random.choice(self.dishes)
         return (nilai, self.list_recom[nilai])
 
 class CalorieIntake:
@@ -231,11 +234,11 @@ class CalorieIntake:
 
     def calculateIdealCalorie(self, activity, weight, height, age, gender):
         if (activity=='low'):
-            activity_value=1.2
+            activity_value = 1.2
         elif (activity=='moderate'):
-            activity_value=1.3
+            activity_value = 1.3
         else:
-            activity_value=1.4
+            activity_value = 1.4
 
         if (gender=='Laki-laki'):
             ideal_cal=activity_value*(66.5+13.8*weight+5*height)/(6.8*age)
@@ -244,16 +247,16 @@ class CalorieIntake:
         return ideal_cal
     
     def getCalorie(self, food):
-        calorie = []
-        return calorie[food]
+        calorie = fetch('https://foodie/calorie-list/', food)
+        return calorie
     
     def calculateConsumedCalorie(self, food, calorie):
         finished=False
         val = 0
-        while finished == False:
+        while !finished:
             val=val+calorie[food]
             temp=input("Sudah Selesai? [Ya/Tidak]") #Ini pengennya dia pencet Finished kalo uda wkkw
-            finished = False if temp=='Tidak' else True
+            finished = True if temp=='Ya'
         return 0
     
     def saveCalorie(self, consumed_cal, ideal_cal, calorieDatabase):
