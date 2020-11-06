@@ -152,23 +152,45 @@ class CalorieIntake:
         self.foodName = foodName
         self.foodCalorie = foodCalorie
         self.date = date
-    
-    def calculateIdealCalorie(self):
-        return True
+
+    def calculateIdealCalorie(self,activity,weight,height,age):
+        if (activity=='low'):
+            activity_value=1.2
+        else if (activity=='moderate'):
+            activity_value=1.3
+        else:
+            activity_value=1.4
+
+        if (gender=='Laki-laki'):
+            ideal_cal=activity_value*(66.5+13.8*weight+5*height)/(6.8*age)
+        else:
+            ideal_cal=activity_value*(655.1+9.6*weight+1.9*height)/(4.7*age)
+        return ideal_cal
     
     def getCalorie(self, food):
+        return calorie[food]
+    
+    def calculateConsumedCalorie(self, food,calorie):
+        finished=False
+        while (!finished):
+            sum=sum+calorie[food]
+            temp=input("Sudah Selesai? [Ya/Tidak]") #Ini pengennya dia pencet Finished kalo uda wkkw
+            finished = False if temp='Tidak' else True
         return 0
     
-    def calculateConsumedCalorie(self):
-        return 0
+    def compareIntake(self,consumed_cal,ideal_cal):
+        save=False
+        if consumed_cal<ideal_cal:
+            print("Batas Kalori Masih Aman")
+            if save==True: #ini mau kek dia click save gitu
+                saveCalorie(consumed_cal)
+        else:
+            print("Warning! Batas Kalori sudah Melebihi Batas!")
     
-    def compareIntake(self):
-        return True
-    
-    def sendNotification(self):
-        return 'Makan bang'
-    
-    def saveCalorie(self):
+    def saveCalorie(self, consumed_cal, ideal_cal):
+        sisa=ideal_cal-consumed_cal
+        print("Sisa Kalori Kamu Hari Ini : ",sisa)
+        #UPDATE DATABASE (?) --> ini simpan database kali ya
         return True
     
     def plotGraph(self):
