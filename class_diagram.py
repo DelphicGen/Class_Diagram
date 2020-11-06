@@ -1,6 +1,6 @@
 from collections import defaultdict
 class iUser:
-    def register(self, password, name, email):
+    def register(self, password, name, email, userRole):
         # check if credentials is
         return True
 
