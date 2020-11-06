@@ -2,7 +2,11 @@ from collections import defaultdict
 class iUser:
     def register(self, password, name, email, userRole):
         # check if credentials is
-        return True
+        registeredEmails = ["abc@gmail.com", "def@gmail.com", "ghi@gmail.com"]
+        if email not in registeredEmails:
+            return True
+        else:
+            return False
 
 class Users:
     def __init__(self, userId, password, name, email, userRole):
@@ -109,7 +113,7 @@ class Content:
         return True
 
 class Consultation:
-    def __init__(self, consultationID, userID, nutrisionistID,consultationTime):
+    def __init__(self, consultationID, userID, nutrisionistID, consultationTime):
         self.consultationID = consultationID
         self.userID = userID
         self.nutrisionistID = nutrisionistID
@@ -153,10 +157,10 @@ class CalorieIntake:
         self.foodCalorie = foodCalorie
         self.date = date
 
-    def calculateIdealCalorie(self,activity,weight,height,age):
+    def calculateIdealCalorie(self, activity, weight, height, age, gender):
         if (activity=='low'):
             activity_value=1.2
-        else if (activity=='moderate'):
+        elif (activity=='moderate'):
             activity_value=1.3
         else:
             activity_value=1.4
@@ -168,17 +172,25 @@ class CalorieIntake:
         return ideal_cal
     
     def getCalorie(self, food):
+        calorie = []
         return calorie[food]
     
-    def calculateConsumedCalorie(self, food,calorie):
+    def calculateConsumedCalorie(self, food, calorie):
         finished=False
-        while (!finished):
-            sum=sum+calorie[food]
+        val = 0
+        while finished == False:
+            val=val+calorie[food]
             temp=input("Sudah Selesai? [Ya/Tidak]") #Ini pengennya dia pencet Finished kalo uda wkkw
-            finished = False if temp='Tidak' else True
+            finished = False if temp=='Tidak' else True
         return 0
     
-    def compareIntake(self,consumed_cal,ideal_cal):
+    def saveCalorie(self, consumed_cal, ideal_cal):
+        sisa=ideal_cal-consumed_cal
+        print("Sisa Kalori Kamu Hari Ini : ",sisa)
+        #UPDATE DATABASE (?) --> ini simpan database kali ya
+        return True
+    
+    def compareIntake(self, consumed_cal, ideal_cal):
         save=False
         if consumed_cal<ideal_cal:
             print("Batas Kalori Masih Aman")
@@ -186,12 +198,6 @@ class CalorieIntake:
                 saveCalorie(consumed_cal)
         else:
             print("Warning! Batas Kalori sudah Melebihi Batas!")
-    
-    def saveCalorie(self, consumed_cal, ideal_cal):
-        sisa=ideal_cal-consumed_cal
-        print("Sisa Kalori Kamu Hari Ini : ",sisa)
-        #UPDATE DATABASE (?) --> ini simpan database kali ya
-        return True
     
     def plotGraph(self):
         return True
