@@ -227,6 +227,7 @@ class CalorieIntake:
         self.foodName = foodName
         self.foodCalorie = foodCalorie
         self.date = date
+        temp=date
 
     def calculateIdealCalorie(self, activity, weight, height, age, gender):
         if (activity=='low'):
@@ -255,10 +256,11 @@ class CalorieIntake:
             finished = False if temp=='Tidak' else True
         return 0
     
-    def saveCalorie(self, consumed_cal, ideal_cal):
+    def saveCalorie(self, consumed_cal, ideal_cal, calorieDatabase):
         sisa=ideal_cal-consumed_cal
         print("Sisa Kalori Kamu Hari Ini : ",sisa)
-        #UPDATE DATABASE (?) --> ini simpan database kali ya
+        if temp.date()!=datetime.datetime.today().date():
+            calorieDatabase[str(self.date)]=consumed_cal
         return True
     
     def compareIntake(self, consumed_cal, ideal_cal):
@@ -266,9 +268,16 @@ class CalorieIntake:
         if consumed_cal<ideal_cal:
             print("Batas Kalori Masih Aman")
             if save==True: #ini mau kek dia click save gitu
-                saveCalorie(consumed_cal)
+                saveCalorie(consumed_cal, ideal_cal)
         else:
             print("Warning! Batas Kalori sudah Melebihi Batas!")
     
-    def plotGraph(self):
+    import matplotlib.pyplot as plt
+    def plotGraph(self, calorieDatabase):
+        plt.plot(calorieDatabase.keys(),calorieDatabase.values())
+        plt.title("Grafik Kalori Harian dari",min(calorieDatabase.keys()),"hingga",max(calorieDatabase.keys()))
+        plt.xlabel("Tanggal")
+        plt.ylabel("Jumlah Kalori")
         return True
+
+calorieDatabase={"2020-11-01":1500,"2020-11-02":1100,"2020-11-03":1450}
