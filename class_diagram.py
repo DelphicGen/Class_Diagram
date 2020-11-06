@@ -1,4 +1,6 @@
 from collections import defaultdict
+import string
+import random
 class iUser:
     def register(self, password, name, email, userRole):
         # check if credentials is
@@ -15,22 +17,61 @@ class Users:
         self.name = name
         self.email = email
         self.userRole = userRole
+        self.isLoggedIn = False
 
-    def login(self, email, password):
-        # check if credentials is 
-        return True
+    def login(self):
+        UserDatabase = {"abc@gmail.com": "abcdefg", "def@gmail.com": "password1", "ghi@gmail.com": "password2"} # Get user list from database
+        if self.isLoggedIn == True:
+            print("Anda sudah login")
+        else:
+            if self.email in UserDatabase:
+                if self.password == UserDatabase[self.email]:
+                    print("Login success")
+                    self.isLoggedIn = True
+                    return True
+                else:
+                    print("Wrong password")
+                    return False
+            else:
+                print("Email not found")
 
     def verifyAccount(self):
-        return True
+        return self.isLoggedIn
 
     def forgetPassword(self):
-        return True
+        if self.isLoggedIn == True:
+            newPassword = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 8))
+            self.password = str(newPassword)
+            return self.password #Send new password to user
+        else:
+            return False
 
-    def changePassword(self, token):
-        return True
+    def changePassword(self, newPassword):
+        UserDatabase = {"abc@gmail.com": "abcdefg", "def@gmail.com": "password1", "ghi@gmail.com": "password2"}
+        if self.isLoggedIn == True:
+            try:
+                UserDatabase[self.email] = newPassword
+                self.password = newPassword
+                return True
+            except:
+                return False
+        else:
+            return False
 
     def logout(self):
-        return True
+        if self.isLoggedIn == True:
+            try:
+                self.userId = None
+                self.password = None
+                self.name = None
+                self.email = None
+                self.userRole = None
+                self.isLoggedIn = False
+                return True
+            except:
+                return False
+        else:
+            return False
 
 class Admin(Users):
     def __init__(self, available):
