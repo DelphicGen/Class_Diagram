@@ -19,8 +19,12 @@ class Users:
         self.userRole = userRole
         self.isLoggedIn = False
 
-    def login(self):
-        return (self.email, self.password)
+    def login(self, email, password):
+        if self.email == email and self.password == password:
+            self.isLoggedIn = True
+            return True
+        else:
+            return False
 
     def getUserRole(self):
         return self.userRole
@@ -52,6 +56,7 @@ class Users:
             return False
 
     def logout(self):
+        self.isLoggedIn = False
         print('\n\nLogout')
         return True
 
@@ -76,11 +81,11 @@ class Admin(Users):
 
 import datetime
 class Customer(Users):
-    def __init__(self, userId, name, email, password, userRole, weight, height, age, gender):
+    def __init__(self, userId, name, email, password, userRole, weight, height, birthDate, gender):
         Users.__init__(self, userId, name, email, password, userRole)
         self.weight = weight
         self.height = height
-        self.age = age
+        self.birthDate = birthDate
         self.gender=gender
         self.calorieRecord = []
 
@@ -96,7 +101,8 @@ class Customer(Users):
             if choose == 0:
                 break
             elif choose == 1:
-                ideal = calorie.calculateIdealCalorie(activity, self.weight, self.height, self.age, self.gender)
+                age = self.calculateAge()
+                ideal = calorie.calculateIdealCalorie(activity, self.weight, self.height, age, self.gender)
                 print('\n\nCalorie ideal: ', ideal)
             elif choose == 2:
                 calorie.compareIntake(foodCalorie)
@@ -111,18 +117,19 @@ class Customer(Users):
     
     def getGender(self):
         return self.gender
-    '''
+    
     def calculateAge(self):
         today = datetime.date.today()
-        birthDate= self.birthDate.date()
-        return (today-birthDate)//365
-    '''
+        day, month, year = map(int, self.birthDate.split('-'))
+        birthDate= datetime.date(year, month, day)
+        return (today-birthDate).days//365
+    
     def bookNutrisionist(self):
         return True
 
     def sendMessage(self):
-        # message = chatMessage('test','test','test','test')
-        # message.sendMessage(message) 
+        message = chatMessage('test','test','test','test')
+        message.sendMessage(message) 
         return True   
 
 class ContentWriter(Users):
@@ -153,7 +160,8 @@ class Nutrisionist(Users):
         self.nameOfHospital = nameOfHospital
         self.rating = 5
 
-    def proofReading(self):
+    def proofReading(self, content):
+        content.approveContent(True)
         return True
 
 class Message():
@@ -184,22 +192,23 @@ class Content:
         self.content = content
         self.approved = False
 
-    def approveContent(self, userRole, approveStatus):
-        if userRole == 'admin' or userRole == 'nutrisionist':
-            self.approved = approveStatus
-            print('Berhasil merubah status content')
-            return True
-        else:
-            print('Akses denied')
-            return False
+    def approveContent(self, approveStatus):
+        self.approved = approveStatus
+        print('Berhasil merubah status content')
+        return True
     
-    def getContent(self):
-        return {
-            'publised' : self.datePublish,
-            'writer' : self.writer,
-            'title' : self.title,
-            'content' : self.content
-        }
+    def getContent(self, userRole):
+        if userRole == 'nutrisionist' or userRole == 'writer' or self.approved:
+            data = {
+                'publised' : self.datePublish,
+                'writer' : self.writer,
+                'title' : self.title,
+                'content' : self.content
+            }
+            return data
+        else:
+            print('Content belum di approved')
+            return None
 
 class Consultation:
     def __init__(self, consultationID, userID, nutrisionistID, consultationTime):
@@ -321,7 +330,7 @@ def tambahUser(id):
             password = input('Your password: ')
             weight = int(input('Your weight: '))
             height = int(input('Your Height: '))
-            birthDate = input('Age: ')
+            birthDate = input('birthDate (day-month-year): ')
             gender = input('Gender P/L: ')
 
             user = Customer(id, name, email, password, 'customer', weight, height, birthDate, gender)
@@ -357,8 +366,8 @@ def login():
     email = input('Email: ')
     password = input('Password: ')
     for user in users:
-        uEmail, uPassword = user.login()
-        if email == uEmail and password == uPassword:
+        status = user.login(email, password)
+        if status:
             return user
     
     return None
@@ -388,7 +397,8 @@ def userManagement(user):
         while True:
             print('\n\n1. Send message')
             print('2. calorie record')
-            print('3. logout')
+            print('3. read content')
+            print('4. logout')
             choose = int(input('Choose: '))
 
             if choose == 1:
@@ -402,6 +412,14 @@ def userManagement(user):
                 user.consumeFood(activity, foodName, foodCalorie)
                 print('success')
             elif choose == 3:
+                id = int(input('\n\nPilih id content: '))
+                try:
+                    content = contents[id]
+                    if content is not None:
+                        print('\n\n', content.getContent(userRole))
+                except:
+                    print('\n\nid content salah')
+            elif choose == 4:
                 user.logout()
                 return
             else:
@@ -409,14 +427,32 @@ def userManagement(user):
     elif userRole == 'nutrisionist':
         while True:
             print('\n\n1. Send message')
-            print('2. Proofreading')
-            print('3. logout')
+            print('2. read content')
+            print('3. proofReading')
+            print('4. logout')
             choose = int(input('Choose: '))
 
             if choose == 1:
                 message = sendMessage(email)
                 messages.append(message)
+            elif choose == 2:
+                id = int(input('\n\nPilih id content: '))
+                try:
+                    content = contents[id]
+                    if content is not None:
+                        print('\n\n', content.getContent(userRole))
+                except:
+                    print('\n\nid content salah')
             elif choose == 3:
+                id = int(input('\n\nPilih id content: '))
+                try:
+                    content = contents[id]
+                    if content is not None:
+                        print('\n\n', content.getContent(userRole))
+                        user.proofReading(content)
+                except:
+                    print('\n\nid content salah')
+            elif choose == 4:
                 user.logout()
                 return
             else:
@@ -427,7 +463,8 @@ def userManagement(user):
             print('2. tambah content')
             print('3. Edit content')
             print('4. Delete content')
-            print('5. logout')
+            print('5. Read content')
+            print('6. logout')
             choose = int(input('Choose: '))
 
             if choose == 1:
@@ -458,6 +495,14 @@ def userManagement(user):
                 except:
                     print('Id salah')
             elif choose == 5:
+                id = int(input('\n\nPilih id content: '))
+                try:
+                    content = contents[id]
+                    if content is not None:
+                        print('\n\n', content.getContent(userRole))
+                except:
+                    print('\n\nid content salah')
+            elif choose == 6:
                 user.logout()
                 return
             else:
