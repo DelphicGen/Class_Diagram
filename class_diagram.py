@@ -74,6 +74,12 @@ class Users:
         else:
             return False
 
+    def getUserRole():
+        return self.userRole
+    
+    def getEmail():
+        return self.email
+
 class Admin(Users):
     def __init__(self, available):
         self.available = True
