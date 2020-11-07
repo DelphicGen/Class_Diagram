@@ -52,19 +52,8 @@ class Users:
             return False
 
     def logout(self):
-        if self.isLoggedIn == True:
-            try:
-                self.userId = None
-                self.password = None
-                self.name = None
-                self.email = None
-                self.userRole = None
-                self.isLoggedIn = False
-                return True
-            except:
-                return False
-        else:
-            return False
+        print('\n\nLogout')
+        return True
 
 class Admin(Users):
     def __init__(self, available):
@@ -87,18 +76,32 @@ class Admin(Users):
 
 import datetime
 class Customer(Users):
-    def __init__(self, userId, name, email, password, userRole, weight, height, birthDate,gender):
+    def __init__(self, userId, name, email, password, userRole, weight, height, age, gender):
         Users.__init__(self, userId, name, email, password, userRole)
         self.weight = weight
         self.height = height
-        self.birthDate = birthDate
+        self.age = age
         self.gender=gender
         self.calorieRecord = []
 
     def consumeFood(self, activity, foodName, foodCalorie):
         calorie = CalorieIntake(activity, foodName, foodCalorie, datetime.datetime.now())
         self.calorieRecord.append(calorie)
-        return calorie
+        while True:
+            print('\n\n0. Exit')
+            print('1. Hitung calorie ideal')
+            print('2. Bandingkan kalori  makanan dan kalori ideal')
+            choose = int(input('Pilih angka: '))
+
+            if choose == 0:
+                break
+            elif choose == 1:
+                ideal = calorie.calculateIdealCalorie(activity, self.weight, self.height, self.age, self.gender)
+                print('\n\nCalorie ideal: ', ideal)
+            elif choose == 2:
+                calorie.compareIntake(foodCalorie)
+                
+        return True
     
     def getWeight(self):
         return self.weight
@@ -108,12 +111,12 @@ class Customer(Users):
     
     def getGender(self):
         return self.gender
-    
+    '''
     def calculateAge(self):
         today = datetime.date.today()
         birthDate= self.birthDate.date()
         return (today-birthDate)//365
-    
+    '''
     def bookNutrisionist(self):
         return True
 
@@ -126,28 +129,21 @@ class ContentWriter(Users):
 
     def __init__(self, userId, name, email, password, userRole):
         Users.__init__(self, userId, name, email, password, userRole)
-        self.content = []
 
     def createContent(self, title, content):
         content = Content(datetime.datetime.now(), self.name, title, content)
-        self.content.append(content)
-        return True
+        return content
     
-    def editContent(self, contentId, title, content):
+    def editContent(self, title, content):
         try:
             content = Content(datetime.datetime.now(), self.name, title, content)
-            self.content[contentId] = content
-            return True
+            return content
         except:
             print('Gagal edit content')
-            return False
+            return None
 
     def deleteContent(self, contentId):
-        try:
-            del(self.content[contentId])
-            return True
-        except:
-            return False
+        return True
 
 class Nutrisionist(Users):
     def __init__(self, userId, name, email, password, userRole, timeShift, nameOfHospital):
@@ -249,7 +245,9 @@ class CalorieIntake:
         self.foodName = foodName
         self.foodCalorie = foodCalorie
         self.date = date
-        temp=date
+        temp = date
+        self.ideal = None
+        self.idealInput = False
 
     def calculateIdealCalorie(self, activity, weight, height, age, gender):
         if (activity=='low'):
@@ -259,10 +257,12 @@ class CalorieIntake:
         else:
             activity_value=1.4
 
-        if (gender=='Laki-laki'):
+        if (gender=='L'):
             ideal_cal=activity_value*(66.5+13.8*weight+5*height)/(6.8*age)
-        else:
+        elif gender == 'P':
             ideal_cal=activity_value*(655.1+9.6*weight+1.9*height)/(4.7*age)
+
+        self.idealInput = True
         return ideal_cal
     
     def getCalorie(self, food):
@@ -285,12 +285,9 @@ class CalorieIntake:
             calorieDatabase[str(self.date)]=consumed_cal
         return True
     
-    def compareIntake(self, consumed_cal, ideal_cal):
-        save=False
-        if consumed_cal<ideal_cal:
+    def compareIntake(self, consumed_cal):
+        if consumed_cal<self.idealInput:
             print("Batas Kalori Masih Aman")
-            if save==True: #ini mau kek dia click save gitu
-                saveCalorie(consumed_cal, ideal_cal)
         else:
             print("Warning! Batas Kalori sudah Melebihi Batas!")
     
@@ -304,6 +301,7 @@ class CalorieIntake:
 
 users = []
 messages = []
+contents = []
 
 def tambahUser(id):
     while True:
@@ -322,7 +320,7 @@ def tambahUser(id):
             password = input('Your password: ')
             weight = int(input('Your weight: '))
             height = int(input('Your Height: '))
-            birthDate = input('Birth Date: ')
+            birthDate = input('Age: ')
             gender = input('Gender P/L: ')
 
             user = Customer(id, name, email, password, 'customer', weight, height, birthDate, gender)
@@ -354,15 +352,15 @@ def tambahUser(id):
             print('\n\nWrong choice\n\n')
             continue
             
-def login(users):
+def login():
     email = input('Email: ')
     password = input('Password: ')
     for user in users:
         uEmail, uPassword = user.login()
         if email == uEmail and password == uPassword:
-            return True
+            return user
     
-    return False
+    return None
 
 def readMessage(email):
     for message in messages:
@@ -387,9 +385,8 @@ def userManagement(user):
 
     if userRole == 'customer':
         while True:
-            print('\n\n0. Exit')
-            print('1. Send message')
-            print('2. calorie reoord')
+            print('\n\n1. Send message')
+            print('2. calorie record')
             print('3. logout')
             choose = int(input('Choose: '))
 
@@ -404,6 +401,63 @@ def userManagement(user):
                 user.consumeFood(activity, foodName, foodCalorie)
                 print('success')
             elif choose == 3:
+                user.logout()
+                return
+            else:
+                continue
+    elif userRole == 'nutrisionist':
+        while True:
+            print('\n\n1. Send message')
+            print('2. Proofreading')
+            print('3. logout')
+            choose = int(input('Choose: '))
+
+            if choose == 1:
+                message = sendMessage(email)
+                messages.append(message)
+            elif choose == 3:
+                user.logout()
+                return
+            else:
+                continue
+    elif userRole == 'writer':
+        while True:
+            print('\n\n1. Send message')
+            print('2. tambah content')
+            print('3. Edit content')
+            print('4. Delete content')
+            print('5. logout')
+            choose = int(input('Choose: '))
+
+            if choose == 1:
+                message = sendMessage(email)
+                messages.append(message)
+            elif choose == 2:
+                title = input('\n\nTitle: ')
+                isi = input('Content: ')
+                content = user.createContent(title, isi)
+                contents.append(content)
+                print('\n\nYour id content: ', len(contents)-1)
+            elif choose == 3:
+                # bug bisa edit content orang lain
+                id = int(input('\n\nId content: '))
+                title = input('Title: ')
+                isi = input('Content: ')
+                content = user.editContent(title, isi)
+                if content is not None:
+                    contents[id] = content
+                    print('\n\nEdit content success')
+
+            elif choose == 4:
+                # bug bisa delete content orang lain
+                id = int(input('\n\nId content: '))
+                try:
+                    contents[id] = None
+                    print('Delete content successfully')
+                except:
+                    print('Id salah')
+            elif choose == 5:
+                user.logout()
                 return
             else:
                 continue
@@ -428,13 +482,12 @@ def main():
                 continue
 
         elif choose == 2:
-            status = login(users)
-            if status:
-                print('Login success')
+            user = login()
+            if user is not None:
+                print('\n\nLogin success')
+                userManagement(user)
             else:
-                print('Login failed')
-
-
+                print('\n\nLogin failed')
 
 if __name__ == '__main__':
     main()
