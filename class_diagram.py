@@ -258,11 +258,11 @@ class CalorieIntake:
             activity_value=1.4
 
         if (gender=='L'):
-            ideal_cal=activity_value*(66.5+13.8*weight+5*height)/(6.8*age)
+            ideal_cal=activity_value*(66.5+13.8*float(weight)+5*float(height))-(6.8*float(age))
         elif gender == 'P':
-            ideal_cal=activity_value*(655.1+9.6*weight+1.9*height)/(4.7*age)
+            ideal_cal=activity_value*(655.1+9.6*float(weight)+1.9*float(height))-(4.7*float(age))
 
-        self.idealInput = True
+        self.idealInput = ideal_cal
         return ideal_cal
     
     def getCalorie(self, food):
@@ -286,6 +286,7 @@ class CalorieIntake:
         return True
     
     def compareIntake(self, consumed_cal):
+        print('\n\nideal: ', self.idealInput, ' consumed: ', consumed_cal)
         if consumed_cal<self.idealInput:
             print("Batas Kalori Masih Aman")
         else:
