@@ -44,12 +44,8 @@ class Users:
         else:
             return False
 
-    def changePassword(self, email, newPassword):
-        if self.email == email:
-            self.password = newPassword
-            return True
-        else:
-            return False
+    def changePassword(self, newPassword):
+        self.password = newPassword
 
     def logout(self):
         self.isLoggedIn = False
@@ -459,7 +455,8 @@ def userManagement(user):
             print('\n\n1. Send message')
             print('2. calorie record')
             print('3. read content')
-            print('4. logout')
+            print('4. Change password')
+            print('5. logout')
             choose = int(input('Choose: '))
 
             if choose == 1:
@@ -481,6 +478,9 @@ def userManagement(user):
                 except:
                     print('\n\nid content salah')
             elif choose == 4:
+                newPassword = input("New password: ")
+                user.changePassword(newPassword)
+            elif choose == 5:
                 user.logout()
                 return
             else:
@@ -490,7 +490,8 @@ def userManagement(user):
             print('\n\n1. Send message')
             print('2. read content')
             print('3. proofReading')
-            print('4. logout')
+            print('4. Change password')
+            print('5. logout')
             choose = int(input('Choose: '))
 
             if choose == 1:
@@ -514,6 +515,9 @@ def userManagement(user):
                 except:
                     print('\n\nid content salah')
             elif choose == 4:
+                newPassword = input("New password: ")
+                user.changePassword(newPassword)
+            elif choose == 5:
                 user.logout()
                 return
             else:
@@ -525,7 +529,8 @@ def userManagement(user):
             print('3. Edit content')
             print('4. Delete content')
             print('5. Read content')
-            print('6. logout')
+            print('6. Change password')
+            print('7. logout')
             choose = int(input('Choose: '))
 
             if choose == 1:
@@ -564,6 +569,9 @@ def userManagement(user):
                 except:
                     print('\n\nid content salah')
             elif choose == 6:
+                newPassword = input("New password: ")
+                user.changePassword(newPassword)
+            elif choose == 7:
                 user.logout()
                 return
             else:
