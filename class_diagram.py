@@ -88,8 +88,12 @@ class Admin(Users):
                 return user
         return None
     
-    def replyMessage(self, message):
-        return True
+    def sendMessage(self, message):
+        if (!self.available):
+            print("Halo Customer yang kami sayangi, terima kasih telah mengirim pesan. Admin akan segera membalas pesan kamu, mohon bersabar:)")
+        else:
+            print("Ceritanya ini admin balas pesan")
+        return None
 
 import datetime
 class Customer(Users):
