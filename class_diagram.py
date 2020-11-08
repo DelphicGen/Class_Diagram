@@ -68,7 +68,7 @@ class Admin(Users):
         self.password = password
 
     def verifyUser(self):
-        if (self.username != None) and (self.password != None): 
+        if (self.email != None) and (self.password != None): 
             return True
         else:
             return False
@@ -77,9 +77,14 @@ class Admin(Users):
         print('Thread solved')
         return True
     
-    def deleteContent(self):
-        print('Content deleted')
-        return True
+    def deleteContent(self, contents, index):
+        try:
+            del contents[index]
+            print('Content deleted')
+            return True
+        except:
+            print('Failed to delete content')
+            return False
     
     def getUserInformation(self, users, email):
         # Search for user through database and return the information
@@ -89,7 +94,7 @@ class Admin(Users):
         return None
     
     def sendMessage(self, message):
-        if (!self.available):
+        if self.available is False:
             print("Halo Customer yang kami sayangi, terima kasih telah mengirim pesan. Admin akan segera membalas pesan kamu, mohon bersabar:)")
         else:
             print("Ceritanya ini admin balas pesan")
@@ -155,19 +160,29 @@ class ContentWriter(Users):
         Users.__init__(self, userId, name, email, password, userRole)
 
     def createContent(self, title, content):
-        content = Content(datetime.datetime.now(), self.name, title, content)
+        content = Content(datetime.datetime.now(), self.email, title, content)
         return content
     
     def editContent(self, title, content):
         try:
-            content = Content(datetime.datetime.now(), self.name, title, content)
+            content = Content(datetime.datetime.now(), self.email, title, content)
             return content
         except:
             print('Gagal edit content')
             return None
 
-    def deleteContent(self, contentId):
-        return True
+    def deleteContent(self, contents, index):
+        if self.email == contents[index].getContent("writer")["writer"]:
+            try:
+                del contents[index]
+                print('Content deleted')
+                return True
+            except:
+                print('Failed to delete content')
+                return False
+        else:
+            print("You are not allowed to delete this content")
+            return None
 
 class Nutrisionist(Users):
     def __init__(self, userId, name, email, password, userRole, timeShift, nameOfHospital):
@@ -418,8 +433,9 @@ def sendMessage(email):
 def adminManagement(user):
     while True:
         print("\n\n1. Get user information")
-        print("2. logout")
-        choose = int(input('choose'))
+        print("2. Delete content")
+        print("3. logout")
+        choose = int(input('Choose: '))
         if choose == 1:
             email = input("Email to search: ")
             foundUser = user.getUserInformation(users, email)
@@ -428,6 +444,9 @@ def adminManagement(user):
             else:
                 print("User found with email:", foundUser.getEmail(), ",With role: ", foundUser.getUserRole())
         elif choose == 2:
+            index = input("Index of content to delete: ")
+            user.deleteContent(contents, int(index))
+        elif choose == 3:
             user.logout()
             return
         else:
@@ -524,20 +543,20 @@ def userManagement(user):
                 contents.append(content)
                 print('\n\nYour id content: ', len(contents)-1)
             elif choose == 3:
-                # bug bisa edit content orang lain
                 id = int(input('\n\nId content: '))
                 title = input('Title: ')
                 isi = input('Content: ')
                 content = user.editContent(title, isi)
                 if content is not None:
-                    contents[id] = content
-                    print('\n\nEdit content success')
-
+                    if contents[id].getContent("writer")["writer"] == user.getEmail():
+                        contents[id] = content
+                        print('\n\nEdit content success')
+                    else:
+                        print("\n\nYou are not allowed to edit this content")
             elif choose == 4:
-                # bug bisa delete content orang lain
                 id = int(input('\n\nId content: '))
                 try:
-                    contents[id] = None
+                    user.deleteContent(contents, id)
                     print('Delete content successfully')
                 except:
                     print('Id salah')
