@@ -1,6 +1,7 @@
 from collections import defaultdict
 import string
 import random
+import matplotlib.pyplot as plt
 
 class iUser:
     def register(self, password, name, email, userRole):
@@ -99,11 +100,9 @@ class Customer(Users):
         self.height = height
         self.birthDate = birthDate
         self.gender=gender
-        self.calorieRecord = []
 
-    def consumeFood(self, activity, foodName, foodCalorie):
+    def consumeFood(self, activity, foodName, foodCalorie, calorieDatabase):
         calorie = CalorieIntake(activity, foodName, foodCalorie, datetime.datetime.now())
-        self.calorieRecord.append(calorie)
         while True:
             print('\n\n0. Exit')
             print('1. Hitung calorie ideal')
@@ -141,7 +140,7 @@ class Customer(Users):
         return True
 
     def sendMessage(self):
-        message = chatMessage('test','test','test','test')
+        message = "Halo brother"
         message.sendMessage(message) 
         return True   
 
@@ -242,13 +241,13 @@ class Consultation:
     
     def sendMessage(self, message):
         # Menambah string ke database chat pada room chat tertentu
-        return True
-    
-    def replyMessage(self, message):
+
         return True
     
     def getUserInformation(self, email):
-        return True
+        for user in users:
+            if user.getEmail() == email:
+                return user
     
     def getUserCalorie(self, email):
         return True
@@ -278,8 +277,7 @@ class CalorieIntake:
         self.activity = activity
         self.foodName = foodName
         self.foodCalorie = foodCalorie
-        self.date = date
-        temp = date
+        self.date = date 
         self.ideal = None
         self.idealInput = False
 
@@ -313,6 +311,7 @@ class CalorieIntake:
         return 0
     
     def saveCalorie(self, consumed_cal, ideal_cal, calorieDatabase):
+        temp=self.date
         sisa=ideal_cal-consumed_cal
         print("Sisa Kalori Kamu Hari Ini : ",sisa)
         if temp.date()!=datetime.datetime.today().date():
@@ -326,7 +325,6 @@ class CalorieIntake:
         else:
             print("Warning! Batas Kalori sudah Melebihi Batas!")
     
-    import matplotlib.pyplot as plt
     def plotGraph(self, calorieDatabase):
         plt.plot(calorieDatabase.keys(),calorieDatabase.values())
         plt.title("Grafik Kalori Harian dari",min(calorieDatabase.keys()),"hingga",max(calorieDatabase.keys()))
@@ -449,6 +447,7 @@ def userManagement(user):
     email = user.getEmail()
 
     readMessage(email)
+    calorieDatabase={'2020-11-01':1000, '2020-11-02':1500, '2020-11-03':1050}
 
     if userRole == 'customer':
         while True:
@@ -467,7 +466,7 @@ def userManagement(user):
                 foodName = input('Food name: ')
                 foodCalorie = int(input('Food calorie: '))
 
-                user.consumeFood(activity, foodName, foodCalorie)
+                user.consumeFood(activity, foodName, foodCalorie,calorieDatabase)
                 print('success')
             elif choose == 3:
                 id = int(input('\n\nPilih id content: '))
