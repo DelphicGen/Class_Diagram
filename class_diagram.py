@@ -86,11 +86,17 @@ class Admin(Users):
         return None
     
     def sendMessage(self, message):
-        if self.available is False:
-            print("Halo Customer yang kami sayangi, terima kasih telah mengirim pesan. Admin akan segera membalas pesan kamu, mohon bersabar:)")
-        else:
-            print("Ceritanya ini admin balas pesan")
-        return None
+        # if self.available is False:
+        #     print("Halo Customer yang kami sayangi, terima kasih telah mengirim pesan. Admin akan segera membalas pesan kamu, mohon bersabar:)")
+        # else:
+        #     print("Ceritanya ini admin balas pesan")
+        # return None
+
+        # currentRoom = getRoom() # get room chat
+        # currentUser = getUser() # get user that is logged in
+        # message = Message(currentRoom, message, currentUser)
+        # message.sendMessage()
+        return True
 
 import datetime
 class Customer(Users):
@@ -142,6 +148,10 @@ class Customer(Users):
 
     def sendMessage(self):
         #Ini belum diisi habis itu ini bisa dicombine sama yg dibawah
+        # currentRoom = getRoom() # get room chat
+        # currentUser = getUser() # get user that is logged in
+        # message = Message(currentRoom, message, currentUser)
+        # message.sendMessage()
         return True   
 
 class ContentWriter(Users):
@@ -185,6 +195,14 @@ class Nutrisionist(Users):
     def proofReading(self, content):
         content.approveContent(True)
         return True
+    
+    def sendMessage(self, message):
+        #Ini belum diisi habis itu ini bisa dicombine sama yg dibawah
+        # currentRoom = getRoom() # get room chat
+        # currentUser = getUser() # get user that is logged in
+        # message = Message(currentRoom, message, currentUser)
+        # message.sendMessage()
+        return True   
 
 class Message():
     def __init__(self, to, message, dari):
@@ -192,6 +210,14 @@ class Message():
         self.to = to
         self.read = False
         self.dari = dari
+
+    def sendMessage(self, message):
+        # save to chat history
+        # currentRoom = getRoom() # get room chat
+        # currentUser = getUser() # get user that is logged in
+        # message = Message(currentRoom, message, currentUser)
+        # message.sendMessage()
+        return True
 
     def getTo(self):
         return self.to
