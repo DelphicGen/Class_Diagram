@@ -44,15 +44,10 @@ class Users:
         else:
             return False
 
-    def changePassword(self, newPassword):
-        UserDatabase = {"abc@gmail.com": "abcdefg", "def@gmail.com": "password1", "ghi@gmail.com": "password2"}
-        if self.isLoggedIn == True:
-            try:
-                UserDatabase[self.email] = newPassword
-                self.password = newPassword
-                return True
-            except:
-                return False
+    def changePassword(self, email, newPassword):
+        if self.email == email:
+            self.password = newPassword
+            return True
         else:
             return False
 
