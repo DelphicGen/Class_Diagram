@@ -62,11 +62,13 @@ class Users:
         return True
 
 class Admin(Users):
-    def __init__(self, available):
+    def __init__(self, email, password, available):
         self.available = True
+        self.email = email
+        self.password = password
 
     def verifyUser(self):
-        if (self.username != None) and (self.password != None) 
+        if (self.username != None) and (self.password != None): 
             return True
         else:
             return False
@@ -79,9 +81,12 @@ class Admin(Users):
         print('Content deleted')
         return True
     
-    def getUserInformation(self, email):
+    def getUserInformation(self, users, email):
         # Search for user through database and return the information
-        return True
+        for user in users:
+            if user.getEmail() == email:
+                return user
+        return None
     
     def replyMessage(self, message):
         return True
@@ -372,13 +377,23 @@ def tambahUser(id):
             print('\n\nWrong choice\n\n')
             continue
             
-def login():
-    email = input('Email: ')
-    password = input('Password: ')
-    for user in users:
-        status = user.login(email, password)
-        if status:
-            return user
+def login(defaultRole):
+    if defaultRole == "non-admin":
+        email = input('Email: ')
+        password = input('Password: ')
+        for user in users:
+            status = user.login(email, password)
+            if status:
+                return user
+    elif defaultRole == "admin":
+        admin = Admin("admin@class-diagram.id", "admin", True)
+        email = input('Email: ')
+        password = input('Password: ')
+        status = admin.login(email, password)
+        if status is not False:
+            return admin
+        else:
+            return None
     
     return None
 
@@ -395,6 +410,24 @@ def sendMessage(email):
     pesan = input('message: ')
     message = Message(to, pesan, email)
     return message
+
+def adminManagement(user):
+    while True:
+        print("\n\n1. Get user information")
+        print("2. logout")
+        choose = int(input('choose'))
+        if choose == 1:
+            email = input("Email to search: ")
+            foundUser = user.getUserInformation(users, email)
+            if foundUser is None:
+                print("No User Found!")
+            else:
+                print("User found with email:", foundUser.getEmail(), ",With role: ", foundUser.getUserRole())
+        elif choose == 2:
+            user.logout()
+            return
+        else:
+            continue
 
 def userManagement(user):
     
@@ -520,11 +553,12 @@ def userManagement(user):
 
 def main():
     print('Simple execute program\n\n')
-
+    
     countUser = 0
     while True:
         print('\n\n1. Tambah user')
-        print('2. Login')
+        print('2. Login as User')
+        print('3. Login as Admin')
         # print('3. Lupa password')
         choose = int(input('Pilih angka: '))
 
@@ -538,10 +572,17 @@ def main():
                 continue
 
         elif choose == 2:
-            user = login()
+            user = login("non-admin")
             if user is not None:
                 print('\n\nLogin success')
                 userManagement(user)
+            else:
+                print('\n\nLogin failed')
+        elif choose == 3:
+            user = login("admin")
+            if user is not None:
+                print('\n\nLogin success')
+                adminManagement(user)
             else:
                 print('\n\nLogin failed')
 
