@@ -66,15 +66,21 @@ class Admin(Users):
         self.available = True
 
     def verifyUser(self):
-        return True
+        if (self.username != None) and (self.password != None) 
+            return True
+        else:
+            return False
 
     def solveThreadProblem(self):
+        print('Thread solved')
         return True
     
     def deleteContent(self):
+        print('Content deleted')
         return True
     
     def getUserInformation(self, email):
+        # Search for user through database and return the information
         return True
     
     def replyMessage(self, message):
@@ -126,6 +132,7 @@ class Customer(Users):
         return (today-birthDate).days//365
     
     def bookNutrisionist(self):
+        # Search for nutrisionist through list of nutrisionists
         return True
 
     def sendMessage(self):
@@ -219,6 +226,7 @@ class Consultation:
         self.consultationTime=consultationTime
     
     def sendMessage(self, message):
+        # Menambah string ke database chat pada room chat tertentu
         return True
     
     def replyMessage(self, message):
@@ -236,7 +244,6 @@ class Consultation:
     def getMedicalReference(self):
         return True
 
-import random
 class RecommendationFood:
 
     dishes= ['Sup Ayam']
