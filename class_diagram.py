@@ -137,11 +137,11 @@ class Customer(Users):
     
     def bookNutrisionist(self):
         # Search for nutrisionist through list of nutrisionists
+        #Ini belum diisi, tapi gak usah book sih soalnya dia live-chat gitu
         return True
 
     def sendMessage(self):
-        message = "Halo brother"
-        message.sendMessage(message) 
+        #Ini belum diisi habis itu ini bisa dicombine sama yg dibawah
         return True   
 
 class ContentWriter(Users):
@@ -241,22 +241,29 @@ class Consultation:
     
     def sendMessage(self, message):
         # Menambah string ke database chat pada room chat tertentu
-
+        #Ini belum diisi
         return True
     
-    def getUserInformation(self, email):
+    def getUserInformation(self, email,user):
         for user in users:
             if user.getEmail() == email:
-                return user
-    
-    def getUserCalorie(self, email):
+                return (userID,user)
         return True
+    
+    def getUserCalorie(self, email, calorieDatabase):
+        return calorieDatabase[email]
     
     def getNutrisionistInformation(self, email):
+        #Ini belum diisi
         return True
     
-    def getMedicalReference(self):
-        return True
+    def getMedicalReference(self, need=False):
+        if (need):
+            doctor=input("Doctor's Name :")
+            hospital=input("Hospital's Name :")
+            reference_message=input("Message from Nutritionist :")
+            reference={'ID':self.consultationID,'Date of Consultation':self.consultationTime,'doctor':doctor,'nutrisionist':nutritionistID,'hospital':hospital,'message':reference_message}
+            return reference
 
 class RecommendationFood:
 
@@ -278,8 +285,7 @@ class CalorieIntake:
         self.foodName = foodName
         self.foodCalorie = foodCalorie
         self.date = date 
-        self.ideal = None
-        self.idealInput = False
+        # self.ideal = None
 
     def calculateIdealCalorie(self, activity, weight, height, age, gender):
         if (activity=='low'):
@@ -294,7 +300,6 @@ class CalorieIntake:
         elif gender == 'P':
             ideal_cal=activity_value*(655.1+9.6*float(weight)+1.9*float(height))-(4.7*float(age))
 
-        self.idealInput = ideal_cal
         return ideal_cal
     
     def getCalorie(self, food):
@@ -310,12 +315,12 @@ class CalorieIntake:
             finished = True if temp == 'Ya' else False
         return 0
     
-    def saveCalorie(self, consumed_cal, ideal_cal, calorieDatabase):
+    def saveCalorie(self, email,consumed_cal, ideal_cal, calorieDatabase):
         temp=self.date
         sisa=ideal_cal-consumed_cal
         print("Sisa Kalori Kamu Hari Ini : ",sisa)
         if temp.date()!=datetime.datetime.today().date():
-            calorieDatabase[str(self.date)]=consumed_cal
+            calorieDatabase[email][str(self.date)]=consumed_cal
         return True
     
     def compareIntake(self, consumed_cal):
@@ -325,9 +330,9 @@ class CalorieIntake:
         else:
             print("Warning! Batas Kalori sudah Melebihi Batas!")
     
-    def plotGraph(self, calorieDatabase):
-        plt.plot(calorieDatabase.keys(),calorieDatabase.values())
-        plt.title("Grafik Kalori Harian dari",min(calorieDatabase.keys()),"hingga",max(calorieDatabase.keys()))
+    def plotGraph(self, calorieDatabase,email):
+        plt.plot(calorieDatabase[email].keys(),calorieDatabase[email].values())
+        plt.title("Grafik Kalori Harian dari",min(calorieDatabase[email].keys()),"hingga",max(calorieDatabase[email].keys()))
         plt.xlabel("Tanggal")
         plt.ylabel("Jumlah Kalori")
         return True
@@ -447,7 +452,9 @@ def userManagement(user):
     email = user.getEmail()
 
     readMessage(email)
-    calorieDatabase={'2020-11-01':1000, '2020-11-02':1500, '2020-11-03':1050}
+    calorieDatabase={'abc@gmail.com':{'2020-11-01':1000, '2020-11-02':1500,'2020-11-03':1050}, 
+    'def@gmail.com':{'2020-11-01':1200, '2020-11-02':1150,'2020-11-03':1300},
+    'ghi@gmail.com':{'2020-11-01':1110, '2020-11-02':1000,'2020-11-03':1000}}
 
     if userRole == 'customer':
         while True:
