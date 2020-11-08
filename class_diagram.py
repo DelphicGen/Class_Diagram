@@ -36,11 +36,11 @@ class Users:
     def verifyAccount(self):
         return self.isLoggedIn
 
-    def forgetPassword(self):
-        if self.isLoggedIn == True:
+    def forgetPassword(self, email):
+        if self.email == email:
             newPassword = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 8))
-            self.password = str(newPassword)
-            return self.password #Send new password to user
+            self.password = newPassword
+            return str(newPassword)
         else:
             return False
 
@@ -582,7 +582,7 @@ def main():
         print('\n\n1. Tambah user')
         print('2. Login as User')
         print('3. Login as Admin')
-        # print('3. Lupa password')
+        print('4. Forget password')
         choose = int(input('Pilih angka: '))
 
         if choose == 1:
@@ -608,6 +608,17 @@ def main():
                 adminManagement(user)
             else:
                 print('\n\nLogin failed')
-
+        elif choose == 4:
+            email = input("Email: ")
+            newPassword = False
+            for user in users:
+                newPassword = user.forgetPassword(email)
+                if newPassword is not False:
+                    break
+            if newPassword is False:
+                print("Email did not match")
+            else:
+                # Send new password to user's email
+                print("Your new password has been sent to your email", newPassword)
 if __name__ == '__main__':
     main()
