@@ -4,10 +4,12 @@ import random
 import matplotlib.pyplot as plt
 
 class iUser:
-    def register(self, password, name, email, userRole):
+    def register(self, password, name, email, userRole,calorieDatabase):
         # check if credentials is
         registeredEmails = ["abc@gmail.com", "def@gmail.com", "ghi@gmail.com"]
         if email not in registeredEmails:
+            registeredEmails.append(email)
+            calorieDatabase[email]={}
             return True
         else:
             return False
@@ -274,7 +276,7 @@ class Consultation:
     def getUserInformation(self, email,user):
         for user in users:
             if user.getEmail() == email:
-                return (userID,user)
+                return (self.userID,user)
         return True
     
     def getUserCalorie(self, email, calorieDatabase):
@@ -289,7 +291,7 @@ class Consultation:
             doctor=input("Doctor's Name :")
             hospital=input("Hospital's Name :")
             reference_message=input("Message from Nutritionist :")
-            reference={'ID':self.consultationID,'Date of Consultation':self.consultationTime,'doctor':doctor,'nutrisionist':nutritionistID,'hospital':hospital,'message':reference_message}
+            reference={'ID':self.consultationID,'Date of Consultation':self.consultationTime,'doctor':doctor,'nutrisionist':self.nutrisionistID,'hospital':hospital,'message':reference_message}
             return reference
 
 class RecommendationFood:
@@ -385,12 +387,16 @@ def tambahUser(id):
             password = input('Your password: ')
             weight = int(input('Your weight: '))
             height = int(input('Your Height: '))
-            birthDate = input('birthDate (day-month-year): ')
+            birthDate = input('birthDate (DD-MM-YYYY): ')
             gender = input('Gender P/L: ')
 
             user = Customer(id, name, email, password, 'customer', weight, height, birthDate, gender)
-
-            return user
+            daftar = iUser()
+            checkEmail=daftar.register(password,name,email,"customer",calorieDatabase)
+            if checkEmail is True:
+                return user
+            else:
+                return "Email has been registered. Try another one"
 
         elif choose == 2:
             name = input('\n\nYour name: ')
@@ -473,15 +479,15 @@ def adminManagement(user):
         else:
             continue
 
+calorieDatabase={'abc@gmail.com':{'2020-11-01':1000, '2020-11-02':1500,'2020-11-03':1050}, 
+'def@gmail.com':{'2020-11-01':1200, '2020-11-02':1150,'2020-11-03':1300},
+'ghi@gmail.com':{'2020-11-01':1110, '2020-11-02':1000,'2020-11-03':1000}}
 def userManagement(user):
     
     userRole = user.getUserRole()
     email = user.getEmail()
 
     readMessage(email)
-    calorieDatabase={'abc@gmail.com':{'2020-11-01':1000, '2020-11-02':1500,'2020-11-03':1050}, 
-    'def@gmail.com':{'2020-11-01':1200, '2020-11-02':1150,'2020-11-03':1300},
-    'ghi@gmail.com':{'2020-11-01':1110, '2020-11-02':1000,'2020-11-03':1000}}
 
     if userRole == 'customer':
         while True:
