@@ -144,10 +144,10 @@ class Customer(Users):
         birthDate= datetime.date(year, month, day)
         return (today-birthDate).days//365
     
-    def bookNutrisionist(self):
-        # Search for nutrisionist through list of nutrisionists
-        #Ini belum diisi, tapi gak usah book sih soalnya dia live-chat gitu
-        return True
+    # def bookNutrisionist(self):
+    #     # Search for nutrisionist through list of nutrisionists
+    #     #Ini belum diisi, tapi gak usah book sih soalnya dia live-chat gitu
+    #     return True
 
     def sendMessage(self):
         #Ini belum diisi habis itu ini bisa dicombine sama yg dibawah
