@@ -268,10 +268,10 @@ class Consultation:
         self.nutrisionistID = nutrisionistID
         self.consultationTime=consultationTime
     
-    def sendMessage(self, message):
-        # Menambah string ke database chat pada room chat tertentu
-        #Ini belum diisi
-        return True
+    # def sendMessage(self, message):
+    #     # Menambah string ke database chat pada room chat tertentu
+    #     #Ini belum diisi
+    #     return True
     
     def getUserInformation(self, email,user):
         for user in users:
@@ -284,6 +284,9 @@ class Consultation:
     
     def getNutrisionistInformation(self, email):
         #Ini belum diisi
+        for user in users:
+            if user.getEmail() == email:
+                return (self.userID,user)
         return True
     
     def getMedicalReference(self, need=False):
