@@ -115,14 +115,15 @@ class Customer(Users):
             print('2. Bandingkan kalori  makanan dan kalori ideal')
             choose = int(input('Pilih angka: '))
 
+            age = self.calculateAge()
+            ideal = calorie.calculateIdealCalorie(activity, self.weight, self.height, age, self.gender)
+
             if choose == 0:
                 break
             elif choose == 1:
-                age = self.calculateAge()
-                ideal = calorie.calculateIdealCalorie(activity, self.weight, self.height, age, self.gender)
-                print('\n\nCalorie ideal: ', ideal)
+                print('\n\nCalorie ideal: ', ideal, 'kkal')
             elif choose == 2:
-                calorie.compareIntake(foodCalorie)
+                calorie.compareIntake(foodCalorie, ideal)
                 
         return True
     
@@ -349,9 +350,9 @@ class CalorieIntake:
             calorieDatabase[email][str(self.date)]=consumed_cal
         return True
     
-    def compareIntake(self, consumed_cal):
-        print('\n\nideal: ', self.idealInput, ' consumed: ', consumed_cal)
-        if consumed_cal<self.idealInput:
+    def compareIntake(self, consumed_cal, ideal):
+        print('\n\nideal: ', ideal, ' consumed: ', consumed_cal)
+        if consumed_cal < ideal:
             print("Batas Kalori Masih Aman")
         else:
             print("Warning! Batas Kalori sudah Melebihi Batas!")
